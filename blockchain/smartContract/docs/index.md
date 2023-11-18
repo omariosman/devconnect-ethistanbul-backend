@@ -2,6 +2,42 @@
 
 ## Detract
 
+### PaperPublished
+
+```solidity
+event PaperPublished(bytes32 paperHash, address owner)
+```
+
+### ChallengeCreated
+
+```solidity
+event ChallengeCreated(bytes32 paperHash, address challenger, uint256 amount)
+```
+
+### UpVoted
+
+```solidity
+event UpVoted(bytes32 paperHash, address voter)
+```
+
+### DownVoted
+
+```solidity
+event DownVoted(bytes32 paperHash, address voter)
+```
+
+### ClaimedByChallenger
+
+```solidity
+event ClaimedByChallenger(bytes32 paperHash, address challenger, uint256 amount)
+```
+
+### ClaimedByPaperOwner
+
+```solidity
+event ClaimedByPaperOwner(bytes32 paperHash, address paperOwner, uint256 amount)
+```
+
 ### votingPeriod
 
 ```solidity
@@ -14,16 +50,16 @@ uint256 votingPeriod
 uint256 minStakingAmountForDetract
 ```
 
-### upVotesReceived
+### upVoteCount
 
 ```solidity
-mapping(bytes32 => uint256) upVotesReceived
+mapping(bytes32 => uint256) upVoteCount
 ```
 
-### downVotesReceived
+### downVoteCount
 
 ```solidity
-mapping(bytes32 => uint256) downVotesReceived
+mapping(bytes32 => uint256) downVoteCount
 ```
 
 ### challengeInitiationTime
@@ -38,6 +74,12 @@ mapping(bytes32 => uint256) challengeInitiationTime
 mapping(bytes32 => uint256) retractionStakeAmount
 ```
 
+### challenger
+
+```solidity
+mapping(bytes32 => address) challenger
+```
+
 ### paperRetractionEvidence
 
 ```solidity
@@ -50,16 +92,16 @@ mapping(bytes32 => bytes32) paperRetractionEvidence
 mapping(bytes32 => address) paperOwner
 ```
 
-### _updateDetractAmountOfPaper
+### _updateDetractStakeAmountOfPaper
 
 ```solidity
-function _updateDetractAmountOfPaper(bytes32 _paperHash, uint256 _amount) public
+function _updateDetractStakeAmountOfPaper(bytes32 _paperHash, uint256 _amount) public
 ```
 
 ### publishPaper
 
 ```solidity
-function publishPaper(address _owner, bytes32 _paper) public
+function publishPaper(bytes32 _paper, address _owner) public
 ```
 
 _publish paper_
@@ -68,13 +110,25 @@ _publish paper_
 
 | Name | Type | Description |
 | ---- | ---- | ----------- |
-| _owner | address | address of the paper owner |
 | _paper | bytes32 | paper hash |
+| _owner | address | address of the paper owner |
 
 ### IsVotingActive
 
 ```solidity
 modifier IsVotingActive(bytes32 _paperHash)
+```
+
+### changeVotingPeriod
+
+```solidity
+function changeVotingPeriod(uint256 _time) public
+```
+
+### changeMinimumStakingAmountForDetract
+
+```solidity
+function changeMinimumStakingAmountForDetract(uint256 _amount) public
 ```
 
 ### challengePaper
