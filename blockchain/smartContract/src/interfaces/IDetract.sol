@@ -3,18 +3,18 @@
 pragma solidity ^0.8.9;
 
 interface IDetract {
-    function publishPaper(bytes32 _paper, address _owner) external;
+    function publishPaper(string memory _paper, address _owner) external;
 
     function challengePaper(
-        bytes32 _paperHash,
-        bytes32 _evidenceHash
+        string memory paper,
+        string memory evidence
     ) external payable;
 
-    function upVote(bytes32 paperHash) external;
+    function upVote(string memory paper) external;
 
-    function downVote(bytes32 paperHash) external;
+    function downVote(string memory paper) external;
 
-    function claimAmountByChallenger(bytes32 _paperHash) external;
+    function claimAmountByChallenger(string memory paper) external;
 
-    function claimAmountByPaperOwner(bytes32 _paperHash) external;
+    function claimAmountByPaperOwner(string memory paper) external;
 }
