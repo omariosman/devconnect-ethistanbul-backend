@@ -6,7 +6,6 @@ require('dotenv').config();
 const { Readable } = require('stream');
 
 const PINATA_JWT = process.env.PINATA_JWT;
-
 const pinataSDK = require('@pinata/sdk');
 
 const app = express();
@@ -40,8 +39,7 @@ const busboyFileHandler = (req, res, next) => {
                 name: fileName,
             },
         };
-        const readableStream = Readable.from(buffer); 
-
+        const readableStream = Readable.from(buffer);
         const result = await pinata.pinFileToIPFS(readableStream, options);
         console.log(JSON.stringify(result));
 		res.json(result);
@@ -54,42 +52,6 @@ app.get('/', (req, res) => {
 });
 
 app.post('/upload',  async (req, res) => {
-    /*
-    const busboyInstance = busboy({ headers: req.headers });
-
-    // Create /tmp directory if it doesn't exist
-    const tmpDir = path.join(__dirname, 'tmp');
-    if (!fs.existsSync(tmpDir)) {
-        fs.mkdirSync(tmpDir);
-    }
-
-    // Handle file parsing
-    busboyInstance.on('file', (fieldname, file, filename) => {
-        console.log(`filename: ${filename.filename}`);
-        console.log(`filename: ${Object.keys(filename)}`)
-        let filePath;
-        let writeStream;
-
-        try {
-         filePath = path.join(tmpDir, filename);
-         console.log(`file path: ${filePath}`)
-        } catch(e) {
-            console.log(`catchhh: ${JSON.stringify(e)}`);
-            
-        }
-         writeStream = fs.createWriteStream(filePath);
-
-        file.pipe(writeStream);
- 
-        writeStream.on('close', () => {
-            console.log(`File ${filename} saved to ${tmpDir}`);
-            res.send('File uploaded!');
-        });
-
-    });
-
-    req.pipe(busboyInstance);
-    */
     busboyFileHandler(req, res);
 });
 
