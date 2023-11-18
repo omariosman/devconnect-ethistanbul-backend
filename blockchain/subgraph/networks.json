@@ -1,0 +1,8 @@
+{
+  "base-testnet": {
+    "Detract": {
+      "address": "0x3A28d71a89123e8894A1Ac536c0623CA22022AE8",
+      "startBlock": 12560083
+    }
+  }
+}
