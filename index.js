@@ -6,7 +6,9 @@ const pinataSDK = require('@pinata/sdk');
 const { Readable } = require('stream');
 require('dotenv').config();
 const { readAllNestedDocs, readNestedDocs, writeNestedDocs, updateFirestoreDocument, writeFirestoreDocument, readFirestoreDocument, readAllDocumentsFromCollection } = require("./helpers/firestore");
+const { storePaperHash } = require("./helpers/blockchains");
 const { COLLECTIONS } = require('./constants/firebase');
+
 const { writePapers } = require('./client-scripts/write-papers-to-firestore');
 const PINATA_JWT = process.env.PINATA_JWT;
 
@@ -62,7 +64,7 @@ const busboyFileHandler = (req, res, next) => {
         // write challenge data to firestore
         const userAddress = payload.metadata.user_address;
         await writeNestedDocs(COLLECTIONS.USER_CHALLENGES, userAddress, COLLECTIONS.CHALLENGES, metadata);
-
+        await storePaperHash(metadataResult.IpfsHash);
 		res.json(metadataResult);
 	});
 	req.pipe(bb);
