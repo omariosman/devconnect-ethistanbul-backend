@@ -7,8 +7,9 @@ import "@openzeppelin/contracts/utils/structs/EnumerableSet.sol";
 import "../interfaces/IDetract.sol";
 
 //Retract the paper based on voting
-//TODO add access tokens
+//TODO Add access tokens
 //TODO Create struct for paper and use it in place of bytes32 mapping
+//TODO Manage double voting
 
 contract Detract is IDetract, Multicall {
     using EnumerableSet for EnumerableSet.Bytes32Set;
@@ -45,6 +46,7 @@ contract Detract is IDetract, Multicall {
     //mapping(address => bytes32[]) public papers;
     mapping(address => EnumerableSet.Bytes32Set) private papers;
     mapping(bytes32 => address) public paperOwner;
+    mapping(address => mapping(bytes32 => bool)) public hasVoted;
 
     function _updatePaperOwner(address _owner, bytes32 _paper) private {
         if (paperOwner[_paper] != address(0)) papers[_owner].remove(_paper);
@@ -118,14 +120,18 @@ contract Detract is IDetract, Multicall {
     ///@dev upvote the paper
     ///@param _paperHash paper hash
     function upVote(bytes32 _paperHash) public IsVotingActive(_paperHash) {
+        require(hasVoted[msg.sender][_paperHash] == false, "Already voted");
         upVoteCount[_paperHash] += 1;
+        hasVoted[msg.sender][_paperHash] = true;
         emit UpVoted(_paperHash, msg.sender);
     }
 
     ///@dev downvote the paper
     ///@param _paperHash paper hash
     function downVote(bytes32 _paperHash) public IsVotingActive(_paperHash) {
+        require(hasVoted[msg.sender][_paperHash] == false, "Already voted");
         downVoteCount[_paperHash] += 1;
+        hasVoted[msg.sender][_paperHash] = true;
         emit DownVoted(_paperHash, msg.sender);
     }
 
