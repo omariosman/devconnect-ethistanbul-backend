@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const PINATA_JWT = process.env.PINATA_JWT;
 
-export const pinataUploadFileWithRetry = async(filePath, timeout = 10000) => {
+const pinataUploadFileWithRetry = async(filePath, timeout = 10000) => {
     const pinata = new pinataSDK({ pinataJWTKey: PINATA_JWT });
     const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error('Request timed out')), timeout);
