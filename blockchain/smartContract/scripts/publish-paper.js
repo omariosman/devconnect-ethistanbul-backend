@@ -9,7 +9,8 @@ async function main() {
     console.log("contract deployed to:", await detractContract.getAddress());
 
     const [signer] = await ethers.getSigners();
-    const tx = await detractContract.connect(signer).publishPaper(paper1, signer.address)
+    const AUTHOR_ADDRESS = process.env.AUTHOR_ADDRESS;
+    const tx = await detractContract.connect(signer).publishPaper(paper1, AUTHOR_ADDRESS)
     console.log({ tx })
 
 }
