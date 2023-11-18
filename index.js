@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');  
 const busboy = require('busboy');
 const pinataSDK = require('@pinata/sdk');
 const { Readable } = require('stream');
@@ -9,6 +10,7 @@ const { COLLECTIONS } = require('./constants/firebase');
 const PINATA_JWT = process.env.PINATA_JWT;
 
 const app = express();
+app.use(cors());
 app.use(bodyParser.json());
 
 const port = 3000;
