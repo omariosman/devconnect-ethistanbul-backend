@@ -64,8 +64,8 @@ const busboyFileHandler = (req, res, next) => {
         // write challenge data to firestore
         const userAddress = payload.metadata.user_address;
         await writeNestedDocs(COLLECTIONS.USER_CHALLENGES, userAddress, COLLECTIONS.CHALLENGES, metadata);
-        await storePaperHash(metadataResult.IpfsHash);
-		res.json(metadataResult);
+        metadataResult.doi = metadata.doi;
+        res.json(metadataResult);
 	});
 	req.pipe(bb);
 };

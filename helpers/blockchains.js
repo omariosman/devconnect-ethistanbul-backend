@@ -9,6 +9,7 @@ const storePaperHash = async(hash) => {
         DETRACT_CONTRACT_ABI,
         treasuryWallet
       );
+    // @todo: the 1st param should be the hash of the paper not the evidence
     const tx = await detractContract.publishPaper(hash, AUTHOR_ADDRESS)
     tx.wait();
     console.log(tx);
