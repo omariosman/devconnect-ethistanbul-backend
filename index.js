@@ -2,19 +2,20 @@ const express = require('express');
 const busboy = require('busboy');
 const path = require('path');
 const fs = require('fs');
-require('dotenv').config();
+const pinataSDK = require('@pinata/sdk');
 const { Readable } = require('stream');
+require('dotenv').config();
 
 const PINATA_JWT = process.env.PINATA_JWT;
-const pinataSDK = require('@pinata/sdk');
 
 const app = express();
 const port = 3000;
 
 const pinata = new pinataSDK({ pinataJWTKey: PINATA_JWT});
 
+const PINATA_GATEWAY = "violet-electric-meadowlark-667.mypinata.cloud/ipfs";
+
 const busboyFileHandler = (req, res, next) => {
-	const tenant = req.headers;
 	const bb = busboy({ headers: req.headers });
 	const payload = {};
     let fileName;
@@ -40,16 +41,24 @@ const busboyFileHandler = (req, res, next) => {
             },
         };
         const readableStream = Readable.from(buffer);
+        // @todo: add retry mechanism
         const result = await pinata.pinFileToIPFS(readableStream, options);
+        const imageURL = `${PINATA_GATEWAY}/${result.IpfsHash}`;
+        let metadata = {...payload.metadata, image: imageURL};
+        const metadataString = JSON.stringify(metadata);
+        const metadataReadableStream = Readable.from(metadataString);
+        const metadataOptions = {
+            pinataMetadata: {
+                name: `${fileName}_metadata`,
+            },
+        };
+        let metadataResult = await pinata.pinFileToIPFS(metadataReadableStream, metadataOptions);
+        metadataResult.IpfsHash = `${PINATA_GATEWAY}/${metadataResult.IpfsHash}`;
         console.log(JSON.stringify(result));
-		res.json(result);
+		res.json(metadataResult);
 	});
 	req.pipe(bb);
 };
-
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
-});
 
 app.post('/upload',  async (req, res) => {
     busboyFileHandler(req, res);
