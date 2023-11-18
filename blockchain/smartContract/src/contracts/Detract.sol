@@ -15,23 +15,38 @@ contract Detract is IDetract, Multicall {
     using EnumerableSet for EnumerableSet.Bytes32Set;
     using EnumerableSet for EnumerableSet.AddressSet;
 
-    event PaperPublished(string indexed paper, address indexed owner);
+    event PaperPublished(
+        bytes32 indexed paperHash,
+        string paper,
+        address indexed owner
+    );
     event ChallengeCreated(
-        string indexed paper,
+        bytes32 indexed paperHash,
         address indexed challenger,
+        string paper,
         string evidence
     );
-    event UpVoted(string indexed paper, address indexed voter);
-    event DownVoted(string indexed paper, address indexed voter);
+    event UpVoted(
+        bytes32 indexed paperHash,
+        string paper,
+        address indexed voter
+    );
+    event DownVoted(
+        bytes32 indexed paperHash,
+        string paper,
+        address indexed voter
+    );
     event ClaimedByChallenger(
-        string indexed paper,
+        bytes32 indexed paperHash,
+        string paper,
         address indexed challenger,
-        uint256 indexed amount
+        uint256 amount
     );
     event ClaimedByPaperOwner(
-        string indexed paper,
+        bytes32 indexed paperHash,
+        string paper,
         address indexed paperOwner,
-        uint256 indexed amount
+        uint256 amount
     );
 
     uint256 public votingPeriod = 1 weeks;
@@ -71,7 +86,7 @@ contract Detract is IDetract, Multicall {
     function publishPaper(string memory _paper, address _owner) public {
         bytes32 _paperHash = findHash(_paper);
         _updatePaperOwner(_owner, _paperHash);
-        emit PaperPublished(_paper, _owner);
+        emit PaperPublished(_paperHash, _paper, _owner);
     }
 
     ///@dev check if voting is active for the paper
@@ -122,7 +137,7 @@ contract Detract is IDetract, Multicall {
         challengeInitiationTime[_paperHash] = block.timestamp;
         paperRetractionEvidence[_paperHash] = _evidenceHash;
         challenger[_paperHash] = msg.sender;
-        emit ChallengeCreated(_paper, msg.sender, _evidence);
+        emit ChallengeCreated(_paperHash, msg.sender, _paper, _evidence);
     }
 
     ///@dev upvote the paper
@@ -132,7 +147,7 @@ contract Detract is IDetract, Multicall {
         require(hasVoted[msg.sender][_paperHash] == false, "Already voted");
         upVoteCount[_paperHash] += 1;
         hasVoted[msg.sender][_paperHash] = true;
-        emit UpVoted(_paper, msg.sender);
+        emit UpVoted(_paperHash, _paper, msg.sender);
     }
 
     ///@dev downvote the paper
@@ -142,7 +157,7 @@ contract Detract is IDetract, Multicall {
         require(hasVoted[msg.sender][_paperHash] == false, "Already voted");
         downVoteCount[_paperHash] += 1;
         hasVoted[msg.sender][_paperHash] = true;
-        emit DownVoted(_paper, msg.sender);
+        emit DownVoted(_paperHash, _paper, msg.sender);
     }
 
     ///@dev claim the amount by challenger
@@ -159,6 +174,7 @@ contract Detract is IDetract, Multicall {
             retractionStakeAmount[_paperHash]
         );
         emit ClaimedByChallenger(
+            _paperHash,
             _paper,
             msg.sender,
             retractionStakeAmount[_paperHash]
@@ -178,6 +194,7 @@ contract Detract is IDetract, Multicall {
         //pay the paper owner
         payable(msg.sender).transfer(retractionStakeAmount[_paperHash]);
         emit ClaimedByPaperOwner(
+            _paperHash,
             _paper,
             msg.sender,
             retractionStakeAmount[_paperHash]
