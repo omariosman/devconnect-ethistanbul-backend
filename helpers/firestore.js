@@ -38,7 +38,7 @@ const readFirestoreDocument = async (collectionId, docId) => {
 
 const writeFirestoreDocument = async (collectionId, docId, data) => {
     const documentReference = db.collection(collectionId).doc(docId);
-    documentReference.set(data)
+    documentReference.update(data)
     .then(() => {
         console.log('Document successfully written to Firestore!');
     })
@@ -67,8 +67,32 @@ const readAllDocumentsFromCollection = async (collectionId) => {
       });
   };
 
+const writeNestedDocs = async (mainCollection, docId, subCollection, data) => {
+  const mainCollectionRef = await db.collection(mainCollection);
+  const mainDocRef = await mainCollectionRef.doc(docId);
+  const nestedCollectionRef = await mainDocRef.collection(subCollection);
+  await nestedCollectionRef.doc().set(data, { merge: true });
+}
+
+const readNestedDocs = async (mainCollection, docId, subCollection) => {
+  const mainCollectionRef = await db.collection(mainCollection);
+  const mainDocRef = await mainCollectionRef.doc(docId);
+  const nestedCollectionRef = await mainDocRef.collection(subCollection);
+  const querySnapshot = await nestedCollectionRef.get();
+
+  const docs = [];
+  querySnapshot.forEach((doc) => {
+    docs.push(doc.data());
+  });
+
+  return docs;
+}
+
+
 module.exports = {
     readFirestoreDocument,
     writeFirestoreDocument,
-    readAllDocumentsFromCollection
+    readAllDocumentsFromCollection,
+    writeNestedDocs,
+    readNestedDocs
 }

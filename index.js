@@ -5,7 +5,7 @@ const busboy = require('busboy');
 const pinataSDK = require('@pinata/sdk');
 const { Readable } = require('stream');
 require('dotenv').config();
-const { readFirestoreDocument, readAllDocumentsFromCollection } = require("./helpers/firestore");
+const { readNestedDocs, writeNestedDocs, writeFirestoreDocument, readFirestoreDocument, readAllDocumentsFromCollection } = require("./helpers/firestore");
 const { COLLECTIONS } = require('./constants/firebase');
 const PINATA_JWT = process.env.PINATA_JWT;
 
@@ -30,8 +30,6 @@ const busboyFileHandler = (req, res, next) => {
 	bb.on('file', async (field, file, filename) => {
 		file.on('data', data => {
             fileName = filename.filename;
-            console.log(`filename: ${fileName}`)
-
 			buffer = Buffer.concat([buffer, data]);
 		});
 	});
@@ -59,6 +57,11 @@ const busboyFileHandler = (req, res, next) => {
         let metadataResult = await pinata.pinFileToIPFS(metadataReadableStream, metadataOptions);
         metadataResult.IpfsHash = `${PINATA_GATEWAY}/${metadataResult.IpfsHash}`;
         console.log(JSON.stringify(result));
+
+        // write challenge data to firestore
+        const userAddress = payload.metadata.user_address;
+        await writeNestedDocs(COLLECTIONS.USER_CHALLENGES, userAddress, COLLECTIONS.CHALLENGES, metadata);
+
 		res.json(metadataResult);
 	});
 	req.pipe(bb);
@@ -83,6 +86,16 @@ app.post('/get-all-papers',  async (req, res) => {
     try {
         const result = await readAllDocumentsFromCollection(COLLECTIONS.PAPERS);
         res.json({status: "Ok", message: result});
+    } catch (e) {
+        res.json({status: "Error", message: e});
+    }
+});
+
+app.post('/get-user-challenges',  async (req, res) => {
+    try {
+        const userAddress = req.body.user_address;
+        const userChallenges = await readNestedDocs(COLLECTIONS.USER_CHALLENGES, userAddress, COLLECTIONS.CHALLENGES);
+        res.json({status: "Ok", message: userChallenges});
     } catch (e) {
         res.json({status: "Error", message: e});
     }
