@@ -1,0 +1,39 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: Detract
+    network: base-testnet
+    source:
+      address: "0xD27821d81BB78aD641C7d2E7b8AC0274D66CA34c"
+      abi: Detract
+      startBlock: 12560083
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - ChallengeCreated
+        - ClaimedByChallenger
+        - ClaimedByPaperOwner
+        - DownVoted
+        - PaperPublished
+        - UpVoted
+      abis:
+        - name: Detract
+          file: ./abis/Detract.json
+      eventHandlers:
+        - event: ChallengeCreated(indexed bytes32,indexed address,indexed uint256)
+          handler: handleChallengeCreated
+        - event: ClaimedByChallenger(indexed bytes32,indexed address,indexed uint256)
+          handler: handleClaimedByChallenger
+        - event: ClaimedByPaperOwner(indexed bytes32,indexed address,indexed uint256)
+          handler: handleClaimedByPaperOwner
+        - event: DownVoted(indexed bytes32,indexed address)
+          handler: handleDownVoted
+        - event: PaperPublished(indexed bytes32,indexed address)
+          handler: handlePaperPublished
+        - event: UpVoted(indexed bytes32,indexed address)
+          handler: handleUpVoted
+      file: ./src/detract.ts
