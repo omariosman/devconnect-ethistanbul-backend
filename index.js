@@ -47,7 +47,7 @@ const busboyFileHandler = (req, res, next) => {
         
         const result = await pinata.pinFileToIPFS(readableStream, options);
         const imageURL = `${PINATA_GATEWAY}/${result.IpfsHash}`;
-        let metadata = {...payload.metadata, image: imageURL};
+        let metadata = {...payload.metadata, image: imageURL, createdAt: new Date()};
         const metadataString = JSON.stringify(metadata);
         const metadataReadableStream = Readable.from(metadataString);
         const metadataOptions = {
@@ -61,7 +61,6 @@ const busboyFileHandler = (req, res, next) => {
 
         // write challenge data to firestore
         const userAddress = payload.metadata.user_address;
-        payload.metadata.createdAt = Date.now();
         await writeNestedDocs(COLLECTIONS.USER_CHALLENGES, userAddress, COLLECTIONS.CHALLENGES, metadata);
 
 		res.json(metadataResult);
