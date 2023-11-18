@@ -39,7 +39,7 @@ describe('------ Detract Flow Tests ------', function () {
 
         it('Should publish papers', async function () {
             const paper1Hash = ethers.id(paper1);
-            await detractContract.publishPaper(paper1Hash, sci1);
+            await detractContract.publishPaper(paper1, sci1);
             const paperOwner = await detractContract.paperOwner(paper1Hash);
             expect(paperOwner).to.equal(sci1.address);
         });
@@ -49,30 +49,30 @@ describe('------ Detract Flow Tests ------', function () {
         });
 
         it('Should Challenge the paper with evience', async function () {
-            const minStakeAmount = await detractContract.minStakingAmountForDetract();
             const paper1Hash = ethers.id(paper1);
-            const evidence1Hash = ethers.id(evidence1);
+            const minStakeAmount = await detractContract.minStakingAmountForDetract();
             console.log({ minStakeAmount: minStakeAmount.toString() })
-            await detractContract.connect(challenger1).challengePaper(paper1Hash, evidence1Hash, { value: minStakeAmount });
+            await detractContract.connect(challenger1).challengePaper(paper1, evidence1, { value: minStakeAmount });
             expect(await detractContract.challenger(paper1Hash)).to.equal(challenger1.address);
         })
 
         it('should upvote the challenge', async function () {
             const paper1Hash = ethers.id(paper1);
-            await detractContract.connect(sci1).upVote(paper1Hash);
+            console.log({ paper1Hash })
+            await detractContract.connect(sci1).upVote(paper1);
             const upvoteCount = await detractContract.upVoteCount(paper1Hash);
             expect(upvoteCount).to.equal(1);
         })
 
         it('should upvote the challenge by 2', async function () {
             const paper1Hash = ethers.id(paper1);
-            await detractContract.connect(sci2).upVote(paper1Hash);
+            await detractContract.connect(sci2).upVote(paper1);
             const upvoteCount = await detractContract.upVoteCount(paper1Hash);
             expect(upvoteCount).to.equal(2);
         })
         it('should downVote the challenge by 1s', async function () {
             const paper1Hash = ethers.id(paper1);
-            await detractContract.connect(sci3).downVote(paper1Hash);
+            await detractContract.connect(sci3).downVote(paper1);
             const downVoteCount = await detractContract.downVoteCount(paper1Hash);
             expect(downVoteCount).to.equal(1);
         })

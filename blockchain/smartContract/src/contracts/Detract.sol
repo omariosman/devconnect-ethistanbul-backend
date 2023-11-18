@@ -15,23 +15,38 @@ contract Detract is IDetract, Multicall {
     using EnumerableSet for EnumerableSet.Bytes32Set;
     using EnumerableSet for EnumerableSet.AddressSet;
 
-    event PaperPublished(bytes32 indexed paperHash, address indexed owner);
+    event PaperPublished(
+        bytes32 indexed paperHash,
+        string paper,
+        address indexed owner
+    );
     event ChallengeCreated(
         bytes32 indexed paperHash,
         address indexed challenger,
-        uint256 indexed amount
+        string paper,
+        string evidence
     );
-    event UpVoted(bytes32 indexed paperHash, address indexed voter);
-    event DownVoted(bytes32 indexed paperHash, address indexed voter);
+    event UpVoted(
+        bytes32 indexed paperHash,
+        string paper,
+        address indexed voter
+    );
+    event DownVoted(
+        bytes32 indexed paperHash,
+        string paper,
+        address indexed voter
+    );
     event ClaimedByChallenger(
         bytes32 indexed paperHash,
+        string paper,
         address indexed challenger,
-        uint256 indexed amount
+        uint256 amount
     );
     event ClaimedByPaperOwner(
         bytes32 indexed paperHash,
+        string paper,
         address indexed paperOwner,
-        uint256 indexed amount
+        uint256 amount
     );
 
     uint256 public votingPeriod = 1 weeks;
@@ -61,12 +76,17 @@ contract Detract is IDetract, Multicall {
         retractionStakeAmount[_paperHash] += _amount;
     }
 
+    function findHash(string memory _paper) public pure returns (bytes32) {
+        return keccak256(bytes(_paper));
+    }
+
     ///@dev publish paper
     ///@param _owner address of the paper owner
     ///@param _paper paper hash
-    function publishPaper(bytes32 _paper, address _owner) public {
-        _updatePaperOwner(_owner, _paper);
-        emit PaperPublished(_paper, _owner);
+    function publishPaper(string memory _paper, address _owner) public {
+        bytes32 _paperHash = findHash(_paper);
+        _updatePaperOwner(_owner, _paperHash);
+        emit PaperPublished(_paperHash, _paper, _owner);
     }
 
     ///@dev check if voting is active for the paper
@@ -77,7 +97,8 @@ contract Detract is IDetract, Multicall {
             challengeInitiationTime[_paperHash] + votingPeriod;
     }
 
-    modifier IsVotingActive(bytes32 _paperHash) {
+    modifier IsVotingActive(string memory _paper) {
+        bytes32 _paperHash = findHash(_paper);
         require(
             _isVotingActive(_paperHash),
             "Voting is not active for this paper"
@@ -94,12 +115,14 @@ contract Detract is IDetract, Multicall {
     }
 
     ///@dev challenge the paper
-    ///@param _paperHash paper hash
-    ///@param _evidenceHash evidence hash
+    ///@param _paper paper hash
+    ///@param _evidence evidence hash
     function challengePaper(
-        bytes32 _paperHash,
-        bytes32 _evidenceHash
+        string memory _paper,
+        string memory _evidence
     ) public payable {
+        bytes32 _paperHash = findHash(_paper);
+        bytes32 _evidenceHash = findHash(_evidence);
         require(
             msg.value >= minStakingAmountForDetract,
             "Insufficient amount for detract"
@@ -114,30 +137,33 @@ contract Detract is IDetract, Multicall {
         challengeInitiationTime[_paperHash] = block.timestamp;
         paperRetractionEvidence[_paperHash] = _evidenceHash;
         challenger[_paperHash] = msg.sender;
-        emit ChallengeCreated(_paperHash, msg.sender, msg.value);
+        emit ChallengeCreated(_paperHash, msg.sender, _paper, _evidence);
     }
 
     ///@dev upvote the paper
-    ///@param _paperHash paper hash
-    function upVote(bytes32 _paperHash) public IsVotingActive(_paperHash) {
+    ///@param _paper paper hash
+    function upVote(string memory _paper) public IsVotingActive(_paper) {
+        bytes32 _paperHash = findHash(_paper);
         require(hasVoted[msg.sender][_paperHash] == false, "Already voted");
         upVoteCount[_paperHash] += 1;
         hasVoted[msg.sender][_paperHash] = true;
-        emit UpVoted(_paperHash, msg.sender);
+        emit UpVoted(_paperHash, _paper, msg.sender);
     }
 
     ///@dev downvote the paper
-    ///@param _paperHash paper hash
-    function downVote(bytes32 _paperHash) public IsVotingActive(_paperHash) {
+    ///@param _paper paper hash
+    function downVote(string memory _paper) public IsVotingActive(_paper) {
+        bytes32 _paperHash = findHash(_paper);
         require(hasVoted[msg.sender][_paperHash] == false, "Already voted");
         downVoteCount[_paperHash] += 1;
         hasVoted[msg.sender][_paperHash] = true;
-        emit DownVoted(_paperHash, msg.sender);
+        emit DownVoted(_paperHash, _paper, msg.sender);
     }
 
     ///@dev claim the amount by challenger
-    ///@param _paperHash paper hash
-    function claimAmountByChallenger(bytes32 _paperHash) public {
+    ///@param _paper paper hash
+    function claimAmountByChallenger(string memory _paper) public {
+        bytes32 _paperHash = findHash(_paper);
         require(!_isVotingActive(_paperHash), "Voting is active");
         require(
             upVoteCount[_paperHash] > downVoteCount[_paperHash],
@@ -149,14 +175,16 @@ contract Detract is IDetract, Multicall {
         );
         emit ClaimedByChallenger(
             _paperHash,
+            _paper,
             msg.sender,
             retractionStakeAmount[_paperHash]
         );
     }
 
     ///@dev claim the amount by paper owner
-    ///@param _paperHash paper hash
-    function claimAmountByPaperOwner(bytes32 _paperHash) public {
+    ///@param _paper paper hash
+    function claimAmountByPaperOwner(string memory _paper) public {
+        bytes32 _paperHash = findHash(_paper);
         require(!_isVotingActive(_paperHash), "Voting is active");
 
         require(
@@ -167,6 +195,7 @@ contract Detract is IDetract, Multicall {
         payable(msg.sender).transfer(retractionStakeAmount[_paperHash]);
         emit ClaimedByPaperOwner(
             _paperHash,
+            _paper,
             msg.sender,
             retractionStakeAmount[_paperHash]
         );

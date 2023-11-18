@@ -21,7 +21,8 @@ export function handleChallengeCreated(event: ChallengeCreatedEvent): void {
   )
   entity.paperHash = event.params.paperHash
   entity.challenger = event.params.challenger
-  entity.amount = event.params.amount
+  entity.paper = event.params.paper
+  entity.evidence = event.params.evidence
 
   entity.blockNumber = event.block.number
   entity.blockTimestamp = event.block.timestamp
@@ -37,6 +38,7 @@ export function handleClaimedByChallenger(
     event.transaction.hash.concatI32(event.logIndex.toI32())
   )
   entity.paperHash = event.params.paperHash
+  entity.paper = event.params.paper
   entity.challenger = event.params.challenger
   entity.amount = event.params.amount
 
@@ -54,6 +56,7 @@ export function handleClaimedByPaperOwner(
     event.transaction.hash.concatI32(event.logIndex.toI32())
   )
   entity.paperHash = event.params.paperHash
+  entity.paper = event.params.paper
   entity.paperOwner = event.params.paperOwner
   entity.amount = event.params.amount
 
@@ -69,6 +72,7 @@ export function handleDownVoted(event: DownVotedEvent): void {
     event.transaction.hash.concatI32(event.logIndex.toI32())
   )
   entity.paperHash = event.params.paperHash
+  entity.paper = event.params.paper
   entity.voter = event.params.voter
 
   entity.blockNumber = event.block.number
@@ -83,6 +87,7 @@ export function handlePaperPublished(event: PaperPublishedEvent): void {
     event.transaction.hash.concatI32(event.logIndex.toI32())
   )
   entity.paperHash = event.params.paperHash
+  entity.paper = event.params.paper
   entity.owner = event.params.owner
 
   entity.blockNumber = event.block.number
@@ -97,6 +102,7 @@ export function handleUpVoted(event: UpVotedEvent): void {
     event.transaction.hash.concatI32(event.logIndex.toI32())
   )
   entity.paperHash = event.params.paperHash
+  entity.paper = event.params.paper
   entity.voter = event.params.voter
 
   entity.blockNumber = event.block.number

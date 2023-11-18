@@ -15,10 +15,16 @@
         "type": "address"
       },
       {
-        "indexed": true,
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
+        "indexed": false,
+        "internalType": "string",
+        "name": "paper",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "evidence",
+        "type": "string"
       }
     ],
     "name": "ChallengeCreated",
@@ -34,13 +40,19 @@
         "type": "bytes32"
       },
       {
+        "indexed": false,
+        "internalType": "string",
+        "name": "paper",
+        "type": "string"
+      },
+      {
         "indexed": true,
         "internalType": "address",
         "name": "challenger",
         "type": "address"
       },
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
@@ -59,13 +71,19 @@
         "type": "bytes32"
       },
       {
+        "indexed": false,
+        "internalType": "string",
+        "name": "paper",
+        "type": "string"
+      },
+      {
         "indexed": true,
         "internalType": "address",
         "name": "paperOwner",
         "type": "address"
       },
       {
-        "indexed": true,
+        "indexed": false,
         "internalType": "uint256",
         "name": "amount",
         "type": "uint256"
@@ -82,6 +100,12 @@
         "internalType": "bytes32",
         "name": "paperHash",
         "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "paper",
+        "type": "string"
       },
       {
         "indexed": true,
@@ -103,6 +127,12 @@
         "type": "bytes32"
       },
       {
+        "indexed": false,
+        "internalType": "string",
+        "name": "paper",
+        "type": "string"
+      },
+      {
         "indexed": true,
         "internalType": "address",
         "name": "owner",
@@ -120,6 +150,12 @@
         "internalType": "bytes32",
         "name": "paperHash",
         "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "paper",
+        "type": "string"
       },
       {
         "indexed": true,
@@ -150,8 +186,8 @@
   },
   {
     "inputs": [
-      { "internalType": "bytes32", "name": "_paperHash", "type": "bytes32" },
-      { "internalType": "bytes32", "name": "_evidenceHash", "type": "bytes32" }
+      { "internalType": "string", "name": "_paper", "type": "string" },
+      { "internalType": "string", "name": "_evidence", "type": "string" }
     ],
     "name": "challengePaper",
     "outputs": [],
@@ -167,6 +203,15 @@
   },
   {
     "inputs": [
+      { "internalType": "uint256", "name": "_amount", "type": "uint256" }
+    ],
+    "name": "changeMinimumStakingAmountForDetract",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
       { "internalType": "uint256", "name": "_time", "type": "uint256" }
     ],
     "name": "changeVotingPeriod",
@@ -176,7 +221,7 @@
   },
   {
     "inputs": [
-      { "internalType": "bytes32", "name": "_paperHash", "type": "bytes32" }
+      { "internalType": "string", "name": "_paper", "type": "string" }
     ],
     "name": "claimAmountByChallenger",
     "outputs": [],
@@ -185,7 +230,7 @@
   },
   {
     "inputs": [
-      { "internalType": "bytes32", "name": "_paperHash", "type": "bytes32" }
+      { "internalType": "string", "name": "_paper", "type": "string" }
     ],
     "name": "claimAmountByPaperOwner",
     "outputs": [],
@@ -194,7 +239,7 @@
   },
   {
     "inputs": [
-      { "internalType": "bytes32", "name": "_paperHash", "type": "bytes32" }
+      { "internalType": "string", "name": "_paper", "type": "string" }
     ],
     "name": "downVote",
     "outputs": [],
@@ -205,6 +250,25 @@
     "inputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
     "name": "downVoteCount",
     "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "string", "name": "_paper", "type": "string" }
+    ],
+    "name": "findHash",
+    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "bytes32", "name": "", "type": "bytes32" }
+    ],
+    "name": "hasVoted",
+    "outputs": [{ "internalType": "bool", "name": "", "type": "bool" }],
     "stateMutability": "view",
     "type": "function"
   },
@@ -242,7 +306,7 @@
   },
   {
     "inputs": [
-      { "internalType": "bytes32", "name": "_paper", "type": "bytes32" },
+      { "internalType": "string", "name": "_paper", "type": "string" },
       { "internalType": "address", "name": "_owner", "type": "address" }
     ],
     "name": "publishPaper",
@@ -259,7 +323,7 @@
   },
   {
     "inputs": [
-      { "internalType": "bytes32", "name": "_paperHash", "type": "bytes32" }
+      { "internalType": "string", "name": "_paper", "type": "string" }
     ],
     "name": "upVote",
     "outputs": [],

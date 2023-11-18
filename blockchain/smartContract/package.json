@@ -5,7 +5,8 @@
     "test": "hardhat test",
     "docgen": "hardhat docgen",
     "deploy": "hardhat run --network baseGoerli scripts/deploy.js",
-    "test:deployed": "hardhat run scripts/detract-test.js --network baseGoerli"
+    "test:deployed": "hardhat run scripts/detract-test.js --network baseGoerli",
+    "test:publishPaper": "hardhat run scripts/publish-paper.js --network baseGoerli"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-chai-matchers": "^2.0.2",

@@ -21,11 +21,13 @@ describe("Describe entity assertions", () => {
     let challenger = Address.fromString(
       "0x0000000000000000000000000000000000000001"
     )
-    let amount = BigInt.fromI32(234)
+    let paper = "Example string value"
+    let evidence = "Example string value"
     let newChallengeCreatedEvent = createChallengeCreatedEvent(
       paperHash,
       challenger,
-      amount
+      paper,
+      evidence
     )
     handleChallengeCreated(newChallengeCreatedEvent)
   })
@@ -56,8 +58,14 @@ describe("Describe entity assertions", () => {
     assert.fieldEquals(
       "ChallengeCreated",
       "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
-      "amount",
-      "234"
+      "paper",
+      "Example string value"
+    )
+    assert.fieldEquals(
+      "ChallengeCreated",
+      "0xa16081f360e3847006db660bae1c6d1b2e17ec2a-1",
+      "evidence",
+      "Example string value"
     )
 
     // More assert options:

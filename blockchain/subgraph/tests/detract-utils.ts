@@ -12,7 +12,8 @@ import {
 export function createChallengeCreatedEvent(
   paperHash: Bytes,
   challenger: Address,
-  amount: BigInt
+  paper: string,
+  evidence: string
 ): ChallengeCreated {
   let challengeCreatedEvent = changetype<ChallengeCreated>(newMockEvent())
 
@@ -31,7 +32,10 @@ export function createChallengeCreatedEvent(
     )
   )
   challengeCreatedEvent.parameters.push(
-    new ethereum.EventParam("amount", ethereum.Value.fromUnsignedBigInt(amount))
+    new ethereum.EventParam("paper", ethereum.Value.fromString(paper))
+  )
+  challengeCreatedEvent.parameters.push(
+    new ethereum.EventParam("evidence", ethereum.Value.fromString(evidence))
   )
 
   return challengeCreatedEvent
@@ -39,6 +43,7 @@ export function createChallengeCreatedEvent(
 
 export function createClaimedByChallengerEvent(
   paperHash: Bytes,
+  paper: string,
   challenger: Address,
   amount: BigInt
 ): ClaimedByChallenger {
@@ -51,6 +56,9 @@ export function createClaimedByChallengerEvent(
       "paperHash",
       ethereum.Value.fromFixedBytes(paperHash)
     )
+  )
+  claimedByChallengerEvent.parameters.push(
+    new ethereum.EventParam("paper", ethereum.Value.fromString(paper))
   )
   claimedByChallengerEvent.parameters.push(
     new ethereum.EventParam(
@@ -67,6 +75,7 @@ export function createClaimedByChallengerEvent(
 
 export function createClaimedByPaperOwnerEvent(
   paperHash: Bytes,
+  paper: string,
   paperOwner: Address,
   amount: BigInt
 ): ClaimedByPaperOwner {
@@ -79,6 +88,9 @@ export function createClaimedByPaperOwnerEvent(
       "paperHash",
       ethereum.Value.fromFixedBytes(paperHash)
     )
+  )
+  claimedByPaperOwnerEvent.parameters.push(
+    new ethereum.EventParam("paper", ethereum.Value.fromString(paper))
   )
   claimedByPaperOwnerEvent.parameters.push(
     new ethereum.EventParam(
@@ -95,6 +107,7 @@ export function createClaimedByPaperOwnerEvent(
 
 export function createDownVotedEvent(
   paperHash: Bytes,
+  paper: string,
   voter: Address
 ): DownVoted {
   let downVotedEvent = changetype<DownVoted>(newMockEvent())
@@ -108,6 +121,9 @@ export function createDownVotedEvent(
     )
   )
   downVotedEvent.parameters.push(
+    new ethereum.EventParam("paper", ethereum.Value.fromString(paper))
+  )
+  downVotedEvent.parameters.push(
     new ethereum.EventParam("voter", ethereum.Value.fromAddress(voter))
   )
 
@@ -116,6 +132,7 @@ export function createDownVotedEvent(
 
 export function createPaperPublishedEvent(
   paperHash: Bytes,
+  paper: string,
   owner: Address
 ): PaperPublished {
   let paperPublishedEvent = changetype<PaperPublished>(newMockEvent())
@@ -129,13 +146,20 @@ export function createPaperPublishedEvent(
     )
   )
   paperPublishedEvent.parameters.push(
+    new ethereum.EventParam("paper", ethereum.Value.fromString(paper))
+  )
+  paperPublishedEvent.parameters.push(
     new ethereum.EventParam("owner", ethereum.Value.fromAddress(owner))
   )
 
   return paperPublishedEvent
 }
 
-export function createUpVotedEvent(paperHash: Bytes, voter: Address): UpVoted {
+export function createUpVotedEvent(
+  paperHash: Bytes,
+  paper: string,
+  voter: Address
+): UpVoted {
   let upVotedEvent = changetype<UpVoted>(newMockEvent())
 
   upVotedEvent.parameters = new Array()
@@ -145,6 +169,9 @@ export function createUpVotedEvent(paperHash: Bytes, voter: Address): UpVoted {
       "paperHash",
       ethereum.Value.fromFixedBytes(paperHash)
     )
+  )
+  upVotedEvent.parameters.push(
+    new ethereum.EventParam("paper", ethereum.Value.fromString(paper))
   )
   upVotedEvent.parameters.push(
     new ethereum.EventParam("voter", ethereum.Value.fromAddress(voter))
