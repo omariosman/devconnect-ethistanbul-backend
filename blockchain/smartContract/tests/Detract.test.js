@@ -72,7 +72,7 @@ describe('------ Detract Flow Tests ------', function () {
         })
         it('should downVote the challenge by 1s', async function () {
             const paper1Hash = ethers.id(paper1);
-            await detractContract.connect(sci1).downVote(paper1Hash);
+            await detractContract.connect(sci3).downVote(paper1Hash);
             const downVoteCount = await detractContract.downVoteCount(paper1Hash);
             expect(downVoteCount).to.equal(1);
         })
